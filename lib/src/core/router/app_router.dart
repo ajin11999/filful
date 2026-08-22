@@ -3,6 +3,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/document_parser/presentation/import_po_screen.dart';
 import '../../features/fulfillment/presentation/fulfillment_screen.dart';
+import '../../features/fulfillment/presentation/po_fulfillment_workbench_screen.dart';
+import '../../features/fulfillment/presentation/po_item_checker_screen.dart';
+import '../../features/invoice/presentation/invoice_preview_share_screen.dart';
 import '../../features/purchase_orders/presentation/purchase_orders_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 
@@ -64,6 +67,36 @@ final GoRouter appRouter = GoRouter(
         ),
       ],
     ),
+    // Detailed Fullscreen Routes
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: '/workbench/:poId',
+      name: 'workbench',
+      builder: (context, state) {
+        final poId = state.pathParameters['poId']!;
+        return PoFulfillmentWorkbenchScreen(poId: poId);
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: '/checker/:poId/:batchId',
+      name: 'checker',
+      builder: (context, state) {
+        final poId = state.pathParameters['poId']!;
+        final batchId = state.pathParameters['batchId']!;
+        return PoItemCheckerScreen(poId: poId, batchId: batchId);
+      },
+    ),
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: '/invoice/:poId/:batchId',
+      name: 'invoice',
+      builder: (context, state) {
+        final poId = state.pathParameters['poId']!;
+        final batchId = state.pathParameters['batchId']!;
+        return InvoicePreviewShareScreen(poId: poId, batchId: batchId);
+      },
+    ),
   ],
 );
 
@@ -93,22 +126,22 @@ class ScaffoldWithNestedNavigation extends StatelessWidget {
           NavigationDestination(
             icon: Icon(Icons.receipt_long_outlined),
             selectedIcon: Icon(Icons.receipt_long),
-            label: 'POs',
+            label: 'PO',
           ),
           NavigationDestination(
             icon: Icon(Icons.file_upload_outlined),
             selectedIcon: Icon(Icons.file_upload),
-            label: 'Import',
+            label: 'Impor',
           ),
           NavigationDestination(
             icon: Icon(Icons.local_shipping_outlined),
             selectedIcon: Icon(Icons.local_shipping),
-            label: 'Fulfill',
+            label: 'Pengiriman',
           ),
           NavigationDestination(
             icon: Icon(Icons.settings_outlined),
             selectedIcon: Icon(Icons.settings),
-            label: 'Settings',
+            label: 'Pengaturan',
           ),
         ],
       ),
