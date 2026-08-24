@@ -173,18 +173,23 @@ class _PoImportPreviewScreenState extends ConsumerState<PoImportPreviewScreen> {
                   if (po.deliveryDate != null)
                     _buildInfoRow('Target Pengiriman', dateFormat.format(po.deliveryDate!), theme),
                   const Divider(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Total Nilai PO (${po.items.length} Item):',
-                        style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
                       ),
+                      const SizedBox(height: 4),
                       Text(
                         CurrencyFormatter.formatIdr(po.grandTotal),
                         style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w900,
                           color: Colors.green.shade800,
+                          fontSize: 24,
                         ),
                       ),
                     ],
