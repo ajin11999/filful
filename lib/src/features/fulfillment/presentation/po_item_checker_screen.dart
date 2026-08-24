@@ -151,7 +151,7 @@ class _PoItemCheckerScreenState extends ConsumerState<PoItemCheckerScreen> {
                   padding: const EdgeInsets.all(16),
                   child: Text(
                     'Pilih Item (Total ${items.length} Item)',
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
                   ),
                 ),
                 Expanded(
@@ -159,25 +159,25 @@ class _PoItemCheckerScreenState extends ConsumerState<PoItemCheckerScreen> {
                     controller: scrollController,
                     padding: const EdgeInsets.all(16),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 5,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
+                      crossAxisCount: 4,
+                      mainAxisSpacing: 12,
+                      crossAxisSpacing: 12,
                       childAspectRatio: 1.0,
                     ),
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       final it = items[index];
-                      Color bgColor = Colors.grey.shade200;
-                      Color textColor = Colors.black87;
+                      Color bgColor = Colors.grey.shade300;
+                      Color textColor = Colors.black;
 
                       if (it.isFulfilled) {
-                        bgColor = Colors.green.shade600;
+                        bgColor = Colors.green.shade700;
                         textColor = Colors.white;
                       } else if (it.isOutOfStock) {
-                        bgColor = Colors.red.shade400;
+                        bgColor = Colors.red.shade600;
                         textColor = Colors.white;
                       } else if (it.isPartial) {
-                        bgColor = Colors.amber.shade700;
+                        bgColor = Colors.amber.shade800;
                         textColor = Colors.white;
                       }
 
@@ -188,21 +188,21 @@ class _PoItemCheckerScreenState extends ConsumerState<PoItemCheckerScreen> {
                           Navigator.of(context).pop();
                           _pageController.jumpToPage(index);
                         },
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(14),
                         child: Container(
                           decoration: BoxDecoration(
                             color: bgColor,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(14),
                             border: isCurrent
-                                ? Border.all(color: Colors.blue.shade900, width: 3)
+                                ? Border.all(color: Colors.blue.shade900, width: 4)
                                 : null,
                           ),
                           alignment: Alignment.center,
                           child: Text(
                             '${index + 1}',
                             style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
                               color: textColor,
                             ),
                           ),
@@ -245,10 +245,15 @@ class _PoItemCheckerScreenState extends ConsumerState<PoItemCheckerScreen> {
         return Scaffold(
           backgroundColor: theme.colorScheme.surface,
           appBar: AppBar(
-            title: const Text('Pemeriksaan Item per Item'),
+            title: const Text(
+              'Pemeriksaan Item per Item',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
             actions: [
               IconButton(
-                icon: const Icon(Icons.grid_view_rounded, size: 28),
+                padding: const EdgeInsets.all(12),
+                constraints: const BoxConstraints(minWidth: 54, minHeight: 54),
+                icon: const Icon(Icons.grid_view_rounded, size: 32),
                 tooltip: 'Daftar Semua Item',
                 onPressed: () => _showJumpSheet(items),
               ),
@@ -285,26 +290,30 @@ class _PoItemCheckerScreenState extends ConsumerState<PoItemCheckerScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                icon: const Icon(Icons.arrow_back_ios_rounded, size: 28),
+                padding: const EdgeInsets.all(12),
+                constraints: const BoxConstraints(minWidth: 52, minHeight: 52),
+                icon: const Icon(Icons.arrow_back_ios_rounded, size: 34),
                 onPressed: index > 0 ? _goToPrevious : null,
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(24),
                 ),
                 child: Text(
                   'Item ${index + 1} dari $totalItems',
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
                     color: theme.colorScheme.onPrimaryContainer,
                   ),
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.arrow_forward_ios_rounded, size: 28),
+                padding: const EdgeInsets.all(12),
+                constraints: const BoxConstraints(minWidth: 52, minHeight: 52),
+                icon: const Icon(Icons.arrow_forward_ios_rounded, size: 34),
                 onPressed: index < totalItems - 1 ? () => _goToNext(totalItems) : null,
               ),
             ],
@@ -327,7 +336,7 @@ class _PoItemCheckerScreenState extends ConsumerState<PoItemCheckerScreen> {
                       poItem.description,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontSize: 30,
+                        fontSize: 32,
                         fontWeight: FontWeight.w900,
                         height: 1.2,
                         letterSpacing: -0.5,
@@ -335,52 +344,53 @@ class _PoItemCheckerScreenState extends ConsumerState<PoItemCheckerScreen> {
                     ),
 
                     const SizedBox(height: 16),
-                    const Divider(),
-                    const SizedBox(height: 8),
+                    const Divider(thickness: 1.5),
+                    const SizedBox(height: 12),
 
                     // PO Target Specifications (Oversized Box)
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
                         color: Colors.blue.shade50,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.blue.shade200, width: 1.5),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: Colors.blue.shade300, width: 2),
                       ),
                       child: Column(
                         children: [
                           const Text(
                             'PESANAN DARI PO:',
                             style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w900,
                               color: Colors.blueGrey,
                               letterSpacing: 1.0,
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 8),
                           Text(
                             '${CurrencyFormatter.formatQty(poItem.requestedQty)} ${poItem.uom}',
                             style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 36,
+                              fontWeight: FontWeight.w900,
                               color: Colors.blue.shade900,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           Text(
                             '@ ${CurrencyFormatter.formatIdr(poItem.targetUnitPrice)} / ${poItem.uom}',
                             style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.blue.shade800,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.blue.shade900,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           Text(
                             'Total Target: ${CurrencyFormatter.formatIdr(poItem.targetTotalPrice)}',
                             style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey.shade700,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade800,
                             ),
                           ),
                         ],
@@ -398,37 +408,37 @@ class _PoItemCheckerScreenState extends ConsumerState<PoItemCheckerScreen> {
                     // 1. Primary Big Green Button: Sesuai PO & Lanjut
                     FilledButton.icon(
                       style: FilledButton.styleFrom(
-                        minimumSize: const Size.fromHeight(66),
-                        backgroundColor: Colors.green.shade700,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-                        elevation: 3,
+                        minimumSize: const Size.fromHeight(70),
+                        backgroundColor: Colors.green.shade800,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        elevation: 4,
                       ),
                       onPressed: () => _fulfillAsOrdered(item, totalItems),
-                      icon: const Icon(Icons.check_circle_rounded, size: 32, color: Colors.white),
+                      icon: const Icon(Icons.check_circle_rounded, size: 36, color: Colors.white),
                       label: const Text(
                         '✓ Sesuai PO & Lanjut',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.white),
+                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white),
                       ),
                     ),
 
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 12),
 
                     // 2. Big Secondary Button: Ubah Jumlah / Harga
                     OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(54),
-                        side: BorderSide(color: Colors.amber.shade800, width: 2),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        minimumSize: const Size.fromHeight(58),
+                        side: BorderSide(color: Colors.amber.shade900, width: 2.5),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                       ),
                       onPressed: () => _showEditSheet(item, totalItems),
-                      icon: Icon(Icons.edit_note_rounded, size: 28, color: Colors.amber.shade900),
+                      icon: Icon(Icons.edit_note_rounded, size: 32, color: Colors.amber.shade900),
                       label: Text(
                         '✏️ Ubah Jumlah / Harga',
-                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.amber.shade900),
+                        style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800, color: Colors.amber.shade900),
                       ),
                     ),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
 
                     // Row: Kosong & Lewati
                     Row(
@@ -436,14 +446,14 @@ class _PoItemCheckerScreenState extends ConsumerState<PoItemCheckerScreen> {
                         Expanded(
                           child: TextButton.icon(
                             style: TextButton.styleFrom(
-                              minimumSize: const Size.fromHeight(48),
-                              foregroundColor: Colors.red.shade700,
+                              minimumSize: const Size.fromHeight(52),
+                              foregroundColor: Colors.red.shade800,
                             ),
                             onPressed: () => _markOutOfStock(item, totalItems),
-                            icon: const Icon(Icons.cancel_outlined, size: 22),
+                            icon: const Icon(Icons.cancel_outlined, size: 26),
                             label: const Text(
                               'Barang Kosong',
-                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -451,14 +461,14 @@ class _PoItemCheckerScreenState extends ConsumerState<PoItemCheckerScreen> {
                         Expanded(
                           child: TextButton.icon(
                             style: TextButton.styleFrom(
-                              minimumSize: const Size.fromHeight(48),
-                              foregroundColor: Colors.grey.shade700,
+                              minimumSize: const Size.fromHeight(52),
+                              foregroundColor: Colors.grey.shade800,
                             ),
                             onPressed: () => _goToNext(totalItems),
-                            icon: const Icon(Icons.skip_next_rounded, size: 24),
+                            icon: const Icon(Icons.skip_next_rounded, size: 28),
                             label: const Text(
                               'Lewati (Next)',
-                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -479,60 +489,63 @@ class _PoItemCheckerScreenState extends ConsumerState<PoItemCheckerScreen> {
     final f = item.fulfillmentItem;
     if (f.status == 'fulfilled') {
       return Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.green.shade50,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.green.shade300),
+          color: Colors.green.shade100,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.green.shade600, width: 2),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.check_circle, color: Colors.green.shade700, size: 20),
+            Icon(Icons.check_circle, color: Colors.green.shade900, size: 24),
             const SizedBox(width: 8),
-            Text(
-              'Terpenuhi: ${CurrencyFormatter.formatQty(f.fulfilledQty)} ${item.poItem.uom} = ${CurrencyFormatter.formatIdr(f.finalTotalPrice)}',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green.shade800, fontSize: 14),
+            Flexible(
+              child: Text(
+                'Terpenuhi: ${CurrencyFormatter.formatQty(f.fulfilledQty)} ${item.poItem.uom} = ${CurrencyFormatter.formatIdr(f.finalTotalPrice)}',
+                style: TextStyle(fontWeight: FontWeight.w800, color: Colors.green.shade900, fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
             ),
           ],
         ),
       );
     } else if (f.status == 'out_of_stock') {
       return Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.red.shade50,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.red.shade300),
+          color: Colors.red.shade100,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.red.shade600, width: 2),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.cancel, color: Colors.red.shade700, size: 20),
+            Icon(Icons.cancel, color: Colors.red.shade900, size: 24),
             const SizedBox(width: 8),
             Text(
               'Status: Barang Kosong (0 Qty)',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red.shade800, fontSize: 14),
+              style: TextStyle(fontWeight: FontWeight.w800, color: Colors.red.shade900, fontSize: 16),
             ),
           ],
         ),
       );
     } else if (f.status == 'partial') {
       return Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.amber.shade50,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.amber.shade400),
+          color: Colors.amber.shade100,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.amber.shade700, width: 2),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.pie_chart, color: Colors.amber.shade800, size: 20),
+            Icon(Icons.pie_chart, color: Colors.amber.shade900, size: 24),
             const SizedBox(width: 8),
             Text(
               'Terpenuhi Sebagian: ${CurrencyFormatter.formatQty(f.fulfilledQty)} ${item.poItem.uom}',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.amber.shade900, fontSize: 14),
+              style: TextStyle(fontWeight: FontWeight.w800, color: Colors.amber.shade900, fontSize: 16),
             ),
           ],
         ),
@@ -540,15 +553,15 @@ class _PoItemCheckerScreenState extends ConsumerState<PoItemCheckerScreen> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(14),
       ),
       child: const Center(
         child: Text(
           'Status: Belum Diperiksa (Pending)',
-          style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600, fontSize: 14),
+          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 16),
         ),
       ),
     );
@@ -642,7 +655,7 @@ class _OversizedEditSheetState extends ConsumerState<_OversizedEditSheet> {
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
-        top: 20,
+        top: 24,
         bottom: MediaQuery.of(context).viewInsets.bottom + 24,
       ),
       decoration: const BoxDecoration(
@@ -656,82 +669,83 @@ class _OversizedEditSheetState extends ConsumerState<_OversizedEditSheet> {
             Text(
               'Sesuaikan ${po.description}',
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             // Qty Stepper and Input
             Text(
               'Jumlah Terpenuhi (${po.uom}):',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Row(
               children: [
                 IconButton.filled(
                   style: IconButton.styleFrom(
-                    minimumSize: const Size(54, 54),
-                    backgroundColor: Colors.grey.shade200,
+                    minimumSize: const Size(62, 62),
+                    backgroundColor: Colors.grey.shade300,
                   ),
-                  icon: const Icon(Icons.remove, color: Colors.black87, size: 28),
+                  icon: const Icon(Icons.remove, color: Colors.black, size: 32),
                   onPressed: () => _adjustQty(-1.0),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 10),
                 Expanded(
                   child: TextField(
                     controller: _qtyController,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 14),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 10),
                 IconButton.filled(
                   style: IconButton.styleFrom(
-                    minimumSize: const Size(54, 54),
-                    backgroundColor: Colors.grey.shade200,
+                    minimumSize: const Size(62, 62),
+                    backgroundColor: Colors.grey.shade300,
                   ),
-                  icon: const Icon(Icons.add, color: Colors.black87, size: 28),
+                  icon: const Icon(Icons.add, color: Colors.black, size: 32),
                   onPressed: () => _adjustQty(1.0),
                 ),
               ],
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             // Billed Price
             Text(
               'Harga Satuan Ditagihkan (Rp):',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             TextField(
               controller: _priceController,
               keyboardType: TextInputType.number,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
                 prefixText: 'Rp ',
                 helperText: 'Harga PO: ${CurrencyFormatter.formatIdr(po.targetUnitPrice)}',
+                helperStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             // Middleman Modal Cost (Optional)
             Text(
               'Modal Beli / Harga Beli Anda (Opsional - Rahasia):',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.indigo.shade800),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.indigo.shade900),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             TextField(
               controller: _modalController,
               keyboardType: TextInputType.number,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
                 prefixText: 'Rp ',
                 hintText: 'Masukkan modal untuk hitung laba',
@@ -739,29 +753,31 @@ class _OversizedEditSheetState extends ConsumerState<_OversizedEditSheet> {
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             // Notes
             TextField(
               controller: _noteController,
+              style: const TextStyle(fontSize: 18),
               decoration: InputDecoration(
                 labelText: 'Catatan (misal: ganti merek / selisih timbangan)',
+                labelStyle: const TextStyle(fontSize: 16),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 28),
 
             FilledButton(
               style: FilledButton.styleFrom(
-                minimumSize: const Size.fromHeight(60),
+                minimumSize: const Size.fromHeight(64),
                 backgroundColor: theme.colorScheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
               ),
               onPressed: _saveChanges,
               child: const Text(
                 'Simpan & Lanjut ke Item Berikutnya',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
           ],
