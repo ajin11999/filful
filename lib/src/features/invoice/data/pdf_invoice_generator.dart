@@ -118,41 +118,69 @@ class PdfInvoiceGenerator {
             ),
             pw.SizedBox(height: 12),
 
-            // Line Items Table
-            pw.TableHelper.fromTextArray(
-              headers: ['No', 'Keterangan Barang', 'Qty', 'Satuan', 'Harga Satuan (Rp)', 'Total (Rp)'],
-              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9.5, color: PdfColors.white),
-              headerDecoration: const pw.BoxDecoration(color: PdfColors.indigo900),
-              cellHeight: 20,
-              cellStyle: const pw.TextStyle(fontSize: 8.5),
-              cellAlignments: {
-                0: pw.Alignment.center,
-                1: pw.Alignment.centerLeft,
-                2: pw.Alignment.centerRight,
-                3: pw.Alignment.center,
-                4: pw.Alignment.centerRight,
-                5: pw.Alignment.centerRight,
-              },
+            // Line Items Table with Color Coding & Bold for Modified Qty/Price
+            pw.Table(
+              border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
               columnWidths: {
                 0: const pw.FixedColumnWidth(24),
                 1: const pw.FlexColumnWidth(4.5),
-                2: const pw.FixedColumnWidth(42),
+                2: const pw.FixedColumnWidth(46),
                 3: const pw.FixedColumnWidth(36),
                 4: const pw.FixedColumnWidth(75),
                 5: const pw.FixedColumnWidth(80),
               },
-              data: deliveredItems.map((item) {
-                final poItem = item.poItem;
-                final fItem = item.fulfillmentItem;
-                return [
-                  '${poItem.itemIndex}',
-                  poItem.description,
-                  CurrencyFormatter.formatQty(fItem.fulfilledQty),
-                  poItem.uom,
-                  CurrencyFormatter.formatIdr(fItem.billedUnitPrice).replaceAll('Rp ', ''),
-                  CurrencyFormatter.formatIdr(fItem.finalTotalPrice).replaceAll('Rp ', ''),
-                ];
-              }).toList(),
+              children: [
+                // Header row
+                pw.TableRow(
+                  decoration: const pw.BoxDecoration(color: PdfColors.indigo900),
+                  children: [
+                    _buildCell('No', isHeader: true, align: pw.Alignment.center),
+                    _buildCell('Keterangan Barang', isHeader: true, align: pw.Alignment.centerLeft),
+                    _buildCell('Qty', isHeader: true, align: pw.Alignment.centerRight),
+                    _buildCell('Satuan', isHeader: true, align: pw.Alignment.center),
+                    _buildCell('Harga Satuan (Rp)', isHeader: true, align: pw.Alignment.centerRight),
+                    _buildCell('Total (Rp)', isHeader: true, align: pw.Alignment.centerRight),
+                  ],
+                ),
+                // Item rows
+                ...deliveredItems.map((item) {
+                  final poItem = item.poItem;
+                  final fItem = item.fulfillmentItem;
+                  final isQtyModified = fItem.fulfilledQty != poItem.requestedQty;
+                  final isPriceModified = fItem.billedUnitPrice != poItem.targetUnitPrice;
+
+                  return pw.TableRow(
+                    children: [
+                      _buildCell('${poItem.itemIndex}', align: pw.Alignment.center),
+                      _buildCell(poItem.description, align: pw.Alignment.centerLeft),
+                      // Qty Cell - Bold & Color-coded if modified
+                      _buildCell(
+                        CurrencyFormatter.formatQty(fItem.fulfilledQty),
+                        align: pw.Alignment.centerRight,
+                        textColor: isQtyModified
+                            ? (fItem.fulfilledQty < poItem.requestedQty ? PdfColors.red900 : PdfColors.green900)
+                            : PdfColors.black,
+                        isBold: isQtyModified,
+                      ),
+                      _buildCell(poItem.uom, align: pw.Alignment.center),
+                      // Billed Unit Price Cell - Bold & Amber/Blue if modified
+                      _buildCell(
+                        CurrencyFormatter.formatIdr(fItem.billedUnitPrice).replaceAll('Rp ', ''),
+                        align: pw.Alignment.centerRight,
+                        textColor: isPriceModified ? PdfColors.amber900 : PdfColors.black,
+                        isBold: isPriceModified,
+                      ),
+                      // Total Price Cell - Bold & Indigo if any change
+                      _buildCell(
+                        CurrencyFormatter.formatIdr(fItem.finalTotalPrice).replaceAll('Rp ', ''),
+                        align: pw.Alignment.centerRight,
+                        textColor: (isQtyModified || isPriceModified) ? PdfColors.indigo900 : PdfColors.black,
+                        isBold: isQtyModified || isPriceModified,
+                      ),
+                    ],
+                  );
+                }),
+              ],
             ),
 
             pw.SizedBox(height: 10),
@@ -265,5 +293,26 @@ class PdfInvoiceGenerator {
     );
 
     return pdf.save();
+  }
+
+  static pw.Widget _buildCell(
+    String text, {
+    bool isHeader = false,
+    pw.Alignment align = pw.Alignment.centerLeft,
+    PdfColor textColor = PdfColors.black,
+    bool isBold = false,
+  }) {
+    return pw.Container(
+      padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 5),
+      alignment: align,
+      child: pw.Text(
+        text,
+        style: pw.TextStyle(
+          fontSize: isHeader ? 9.5 : 8.5,
+          fontWeight: (isHeader || isBold) ? pw.FontWeight.bold : pw.FontWeight.normal,
+          color: isHeader ? PdfColors.white : textColor,
+        ),
+      ),
+    );
   }
 }
