@@ -120,7 +120,7 @@ class PdfInvoiceGenerator {
 
             // Line Items Table
             pw.TableHelper.fromTextArray(
-              headers: ['No', 'Keterangan Barang', 'Qty', 'Satuan', 'Harga Satuan (Rp)', 'Total (Rp)'],
+              headers: ['No', 'Keterangan Barang', 'Qty Kirim', 'Satuan', 'Harga Satuan (Rp)', 'Total (Rp)'],
               headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9.5, color: PdfColors.white),
               headerDecoration: const pw.BoxDecoration(color: PdfColors.indigo900),
               cellHeight: 20,
@@ -136,24 +136,61 @@ class PdfInvoiceGenerator {
               columnWidths: {
                 0: const pw.FixedColumnWidth(24),
                 1: const pw.FlexColumnWidth(4.5),
-                2: const pw.FixedColumnWidth(42),
+                2: const pw.FixedColumnWidth(55),
                 3: const pw.FixedColumnWidth(36),
-                4: const pw.FixedColumnWidth(75),
+                4: const pw.FixedColumnWidth(85),
                 5: const pw.FixedColumnWidth(80),
               },
               data: deliveredItems.map((item) {
                 final poItem = item.poItem;
                 final fItem = item.fulfillmentItem;
+
+                final hasPriceChange = (fItem.billedUnitPrice - poItem.targetUnitPrice).abs() > 0.01;
+                final hasQtyDifference = (fItem.fulfilledQty - poItem.requestedQty).abs() > 0.001;
+
+                final String descText = [
+                  poItem.description,
+                  if (hasPriceChange)
+                    '* Penyesuaian harga (Harga PO: ${CurrencyFormatter.formatIdr(poItem.targetUnitPrice)})',
+                  if (hasQtyDifference)
+                    '* Pesanan PO: ${CurrencyFormatter.formatQty(poItem.requestedQty)} ${poItem.uom}',
+                ].join('\n');
+
+                final String qtyText = hasQtyDifference
+                    ? '${CurrencyFormatter.formatQty(fItem.fulfilledQty)}\n(PO: ${CurrencyFormatter.formatQty(poItem.requestedQty)})'
+                    : CurrencyFormatter.formatQty(fItem.fulfilledQty);
+
+                final String priceText = hasPriceChange
+                    ? '${CurrencyFormatter.formatIdr(fItem.billedUnitPrice).replaceAll('Rp ', '')}\n(PO: ${CurrencyFormatter.formatIdr(poItem.targetUnitPrice).replaceAll('Rp ', '')})'
+                    : CurrencyFormatter.formatIdr(fItem.billedUnitPrice).replaceAll('Rp ', '');
+
                 return [
                   '${poItem.itemIndex}',
-                  poItem.description,
-                  CurrencyFormatter.formatQty(fItem.fulfilledQty),
+                  descText,
+                  qtyText,
                   poItem.uom,
-                  CurrencyFormatter.formatIdr(fItem.billedUnitPrice).replaceAll('Rp ', ''),
+                  priceText,
                   CurrencyFormatter.formatIdr(fItem.finalTotalPrice).replaceAll('Rp ', ''),
                 ];
               }).toList(),
             ),
+
+            if (deliveredItems.any((i) =>
+                (i.fulfillmentItem.billedUnitPrice - i.poItem.targetUnitPrice).abs() > 0.01 ||
+                (i.fulfillmentItem.fulfilledQty - i.poItem.requestedQty).abs() > 0.001))
+              pw.Container(
+                margin: const pw.EdgeInsets.only(top: 4, bottom: 4),
+                padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: pw.BoxDecoration(
+                  color: PdfColors.amber50,
+                  border: pw.Border.all(color: PdfColors.amber300, width: 0.5),
+                  borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
+                ),
+                child: pw.Text(
+                  '* Catatan Transparansi: Terdapat penyesuaian harga / kuantitas dari PO asli yang disesuaikan dengan ketersediaan & pasar.',
+                  style: pw.TextStyle(fontSize: 7.5, color: PdfColors.amber900, fontStyle: pw.FontStyle.italic),
+                ),
+              ),
 
             pw.SizedBox(height: 10),
 

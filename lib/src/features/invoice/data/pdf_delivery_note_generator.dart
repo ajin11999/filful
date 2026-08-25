@@ -103,7 +103,7 @@ class PdfDeliveryNoteGenerator {
 
             // Table of Delivered Items
             pw.TableHelper.fromTextArray(
-              headers: ['No', 'Nama Barang / Keterangan', 'Jumlah', 'Satuan', 'Catatan / Status'],
+              headers: ['No', 'Nama Barang / Keterangan', 'Qty Kirim', 'Satuan', 'Catatan / Status'],
               headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10, color: PdfColors.white),
               headerDecoration: const pw.BoxDecoration(color: PdfColors.blue800),
               cellHeight: 22,
@@ -118,19 +118,33 @@ class PdfDeliveryNoteGenerator {
               columnWidths: {
                 0: const pw.FixedColumnWidth(28),
                 1: const pw.FlexColumnWidth(4),
-                2: const pw.FixedColumnWidth(55),
+                2: const pw.FixedColumnWidth(60),
                 3: const pw.FixedColumnWidth(45),
                 4: const pw.FlexColumnWidth(2.5),
               },
               data: deliveredItems.map((item) {
                 final poItem = item.poItem;
                 final fItem = item.fulfillmentItem;
+
+                final hasQtyDifference = (fItem.fulfilledQty - poItem.requestedQty).abs() > 0.001;
+                final String qtyText = hasQtyDifference
+                    ? '${CurrencyFormatter.formatQty(fItem.fulfilledQty)}\n(PO: ${CurrencyFormatter.formatQty(poItem.requestedQty)})'
+                    : CurrencyFormatter.formatQty(fItem.fulfilledQty);
+
+                String statusNote = 'Lengkap';
+                if (hasQtyDifference) {
+                  statusNote = 'Sebagian (Dipesan PO: ${CurrencyFormatter.formatQty(poItem.requestedQty)} ${poItem.uom})';
+                }
+                if (fItem.note != null && fItem.note!.isNotEmpty) {
+                  statusNote = '$statusNote - ${fItem.note}';
+                }
+
                 return [
                   '${poItem.itemIndex}',
                   poItem.description,
-                  CurrencyFormatter.formatQty(fItem.fulfilledQty),
+                  qtyText,
                   poItem.uom,
-                  fItem.note ?? (fItem.fulfilledQty < poItem.requestedQty ? 'Sebagian (PO: ${CurrencyFormatter.formatQty(poItem.requestedQty)})' : 'Lengkap'),
+                  statusNote,
                 ];
               }).toList(),
             ),
