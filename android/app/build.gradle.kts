@@ -1,8 +1,5 @@
-import java.io.File
-
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
@@ -32,48 +29,11 @@ android {
         versionName = flutter.versionName
     }
 
-    signingConfigs {
-        create("release") {
-            val keystoreFilePath = System.getenv("KEYSTORE_FILE_PATH") ?: (project.findProperty("KEYSTORE_FILE_PATH") as String?)
-            val storePasswordStr = System.getenv("KEYSTORE_PASSWORD") ?: (project.findProperty("KEYSTORE_PASSWORD") as String?)
-            val keyAliasStr = System.getenv("KEY_ALIAS") ?: (project.findProperty("KEY_ALIAS") as String?)
-            val keyPasswordStr = System.getenv("KEY_PASSWORD") ?: (project.findProperty("KEY_PASSWORD") as String?)
-
-            if (!keystoreFilePath.isNullOrEmpty() && File(keystoreFilePath).exists()) {
-                storeFile = File(keystoreFilePath)
-                storePassword = storePasswordStr
-                keyAlias = keyAliasStr
-                keyPassword = keyPasswordStr
-            } else {
-                val debugConfig = signingConfigs.getByName("debug")
-                val debugKeystore = debugConfig.storeFile
-                if (debugKeystore != null && !debugKeystore.exists()) {
-                    debugKeystore.parentFile?.mkdirs()
-                    runCatching {
-                        ProcessBuilder(
-                            "keytool", "-genkey", "-v",
-                            "-keystore", debugKeystore.absolutePath,
-                            "-storepass", "android",
-                            "-alias", "androiddebugkey",
-                            "-keypass", "android",
-                            "-keyalg", "RSA",
-                            "-keysize", "2048",
-                            "-validity", "10000",
-                            "-dname", "CN=Android Debug,O=Android,C=US"
-                        ).start().waitFor()
-                    }
-                }
-                storeFile = debugConfig.storeFile
-                storePassword = debugConfig.storePassword
-                keyAlias = debugConfig.keyAlias
-                keyPassword = debugConfig.keyPassword
-            }
-        }
-    }
-
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 }
