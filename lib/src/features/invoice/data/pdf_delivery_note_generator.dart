@@ -101,20 +101,9 @@ class PdfDeliveryNoteGenerator {
             ),
             pw.SizedBox(height: 12),
 
-            // Table of Delivered Items
-            pw.TableHelper.fromTextArray(
-              headers: ['No', 'Nama Barang / Keterangan', 'Jumlah', 'Satuan', 'Catatan / Status'],
-              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10, color: PdfColors.white),
-              headerDecoration: const pw.BoxDecoration(color: PdfColors.blue800),
-              cellHeight: 22,
-              cellStyle: const pw.TextStyle(fontSize: 9),
-              cellAlignments: {
-                0: pw.Alignment.center,
-                1: pw.Alignment.centerLeft,
-                2: pw.Alignment.centerRight,
-                3: pw.Alignment.center,
-                4: pw.Alignment.centerLeft,
-              },
+            // Table of Delivered Items with Color Coding & Bold for Modified Qty
+            pw.Table(
+              border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
               columnWidths: {
                 0: const pw.FixedColumnWidth(28),
                 1: const pw.FlexColumnWidth(4),
@@ -122,17 +111,63 @@ class PdfDeliveryNoteGenerator {
                 3: const pw.FixedColumnWidth(45),
                 4: const pw.FlexColumnWidth(2.5),
               },
-              data: deliveredItems.map((item) {
-                final poItem = item.poItem;
-                final fItem = item.fulfillmentItem;
-                return [
-                  '${poItem.itemIndex}',
-                  poItem.description,
-                  CurrencyFormatter.formatQty(fItem.fulfilledQty),
-                  poItem.uom,
-                  fItem.note ?? (fItem.fulfilledQty < poItem.requestedQty ? 'Sebagian (PO: ${CurrencyFormatter.formatQty(poItem.requestedQty)})' : 'Lengkap'),
-                ];
-              }).toList(),
+              children: [
+                // Header row
+                pw.TableRow(
+                  decoration: const pw.BoxDecoration(color: PdfColors.blue800),
+                  children: [
+                    _buildCell('No', isHeader: true, align: pw.Alignment.center),
+                    _buildCell('Nama Barang / Keterangan', isHeader: true, align: pw.Alignment.centerLeft),
+                    _buildCell('Jumlah', isHeader: true, align: pw.Alignment.centerRight),
+                    _buildCell('Satuan', isHeader: true, align: pw.Alignment.center),
+                    _buildCell('Catatan / Status', isHeader: true, align: pw.Alignment.centerLeft),
+                  ],
+                ),
+                // Item rows
+                ...deliveredItems.map((item) {
+                  final poItem = item.poItem;
+                  final fItem = item.fulfillmentItem;
+                  final isQtyModified = (fItem.fulfilledQty - poItem.requestedQty).abs() > 0.001;
+
+                  final qtyText = isQtyModified
+                      ? '${CurrencyFormatter.formatQty(fItem.fulfilledQty)} (PO:${CurrencyFormatter.formatQty(poItem.requestedQty)})'
+                      : CurrencyFormatter.formatQty(fItem.fulfilledQty);
+
+                  final noteText = fItem.note ??
+                      (fItem.fulfilledQty < poItem.requestedQty
+                          ? 'Sebagian (PO: ${CurrencyFormatter.formatQty(poItem.requestedQty)})'
+                          : 'Lengkap');
+
+                  final qtyBg = isQtyModified
+                      ? (fItem.fulfilledQty < poItem.requestedQty ? PdfColors.red100 : PdfColors.green100)
+                      : null;
+                  final qtyColor = isQtyModified
+                      ? (fItem.fulfilledQty < poItem.requestedQty ? PdfColors.red900 : PdfColors.green900)
+                      : PdfColors.black;
+
+                  return pw.TableRow(
+                    children: [
+                      _buildCell('${poItem.itemIndex}', align: pw.Alignment.center),
+                      _buildCell(poItem.description, align: pw.Alignment.centerLeft),
+                      _buildCell(
+                        qtyText,
+                        align: pw.Alignment.centerRight,
+                        bgColor: qtyBg,
+                        textColor: qtyColor,
+                        isBold: isQtyModified,
+                      ),
+                      _buildCell(poItem.uom, align: pw.Alignment.center),
+                      _buildCell(
+                        noteText,
+                        align: pw.Alignment.centerLeft,
+                        bgColor: isQtyModified ? PdfColors.amber100 : null,
+                        textColor: isQtyModified ? PdfColors.amber900 : PdfColors.black,
+                        isBold: isQtyModified,
+                      ),
+                    ],
+                  );
+                }),
+              ],
             ),
 
             pw.SizedBox(height: 16),
@@ -186,6 +221,34 @@ class PdfDeliveryNoteGenerator {
             child: pw.Text(value, style: const pw.TextStyle(fontSize: 9)),
           ),
         ],
+      ),
+    );
+  }
+
+  static pw.Widget _buildCell(
+    String text, {
+    bool isHeader = false,
+    pw.Alignment align = pw.Alignment.centerLeft,
+    PdfColor? bgColor,
+    PdfColor textColor = PdfColors.black,
+    bool isBold = false,
+  }) {
+    return pw.Container(
+      padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 5),
+      alignment: align,
+      decoration: bgColor != null
+          ? pw.BoxDecoration(
+              color: bgColor,
+              borderRadius: const pw.BorderRadius.all(pw.Radius.circular(2)),
+            )
+          : null,
+      child: pw.Text(
+        text,
+        style: pw.TextStyle(
+          fontSize: isHeader ? 10 : (isBold ? 9 : 8.5),
+          fontWeight: (isHeader || isBold) ? pw.FontWeight.bold : pw.FontWeight.normal,
+          color: isHeader ? PdfColors.white : textColor,
+        ),
       ),
     );
   }
