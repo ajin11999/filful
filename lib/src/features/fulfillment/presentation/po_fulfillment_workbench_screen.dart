@@ -93,16 +93,7 @@ class _PoFulfillmentWorkbenchScreenState extends ConsumerState<PoFulfillmentWork
                     actions: [
                       PopupMenuButton<String>(
                         onSelected: (val) async {
-                          if (val == 'fulfill_pending') {
-                            await db.fulfillPendingExactForBatch(batch.id);
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Item yang belum diperiksa ditandai Sesuai PO'),
-                                ),
-                              );
-                            }
-                          } else if (val == 'fulfill_all') {
+                          if (val == 'fulfill_all') {
                             await db.fulfillAllExactForBatch(batch.id);
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -113,22 +104,12 @@ class _PoFulfillmentWorkbenchScreenState extends ConsumerState<PoFulfillmentWork
                         },
                         itemBuilder: (context) => [
                           const PopupMenuItem(
-                            value: 'fulfill_pending',
-                            child: Row(
-                              children: [
-                                Icon(Icons.playlist_add_check_rounded, color: Colors.green),
-                                SizedBox(width: 8),
-                                Text('Tandai Item Belum Diperiksa Sesuai PO'),
-                              ],
-                            ),
-                          ),
-                          const PopupMenuItem(
                             value: 'fulfill_all',
                             child: Row(
                               children: [
                                 Icon(Icons.done_all, color: Colors.green),
                                 SizedBox(width: 8),
-                                Text('Tandai Ulang Semua Sesuai PO'),
+                                Text('Tandai Semua Sesuai PO'),
                               ],
                             ),
                           ),

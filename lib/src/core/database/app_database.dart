@@ -261,34 +261,6 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
-  Future<void> fulfillPendingExactForBatch(String batchId) async {
-    final items = await (select(fulfillmentItemsTable).join([
-      innerJoin(
-        purchaseOrderItemsTable,
-        purchaseOrderItemsTable.id.equalsExp(fulfillmentItemsTable.poItemId),
-      ),
-    ])
-          ..where(fulfillmentItemsTable.batchId.equals(batchId))
-          ..where(fulfillmentItemsTable.status.equals('pending')))
-        .get();
-
-    await transaction(() async {
-      for (final row in items) {
-        final fItem = row.readTable(fulfillmentItemsTable);
-        final poItem = row.readTable(purchaseOrderItemsTable);
-
-        await (update(fulfillmentItemsTable)..where((t) => t.id.equals(fItem.id))).write(
-          FulfillmentItemsTableCompanion(
-            fulfilledQty: Value(poItem.requestedQty),
-            billedUnitPrice: Value(poItem.targetUnitPrice),
-            finalTotalPrice: Value(poItem.targetTotalPrice),
-            status: const Value('fulfilled'),
-          ),
-        );
-      }
-    });
-  }
-
   Future<void> fulfillAllExactForBatch(String batchId) async {
     final items = await (select(fulfillmentItemsTable).join([
       innerJoin(
