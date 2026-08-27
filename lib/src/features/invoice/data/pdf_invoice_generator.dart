@@ -303,4 +303,25 @@ class PdfInvoiceGenerator {
 
     return pdf.save();
   }
+
+  static pw.Widget _buildCell(
+    String text, {
+    bool isHeader = false,
+    pw.Alignment align = pw.Alignment.centerLeft,
+    PdfColor textColor = PdfColors.black,
+    bool isBold = false,
+  }) {
+    return pw.Container(
+      padding: const pw.EdgeInsets.symmetric(horizontal: 4, vertical: 5),
+      alignment: align,
+      child: pw.Text(
+        text,
+        style: pw.TextStyle(
+          fontSize: isHeader ? 9.5 : 8.5,
+          fontWeight: (isHeader || isBold) ? pw.FontWeight.bold : pw.FontWeight.normal,
+          color: isHeader ? PdfColors.white : textColor,
+        ),
+      ),
+    );
+  }
 }

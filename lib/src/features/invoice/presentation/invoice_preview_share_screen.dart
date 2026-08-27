@@ -134,13 +134,16 @@ Terima kasih.
 
                 return Scaffold(
                   appBar: AppBar(
-                    title: const Text('Surat Jalan & Invoice'),
+                    title: const Text(
+                      'Surat Jalan & Invoice',
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
                     bottom: TabBar(
                       controller: _tabController,
-                      labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                       tabs: const [
-                        Tab(icon: Icon(Icons.local_shipping_outlined), text: 'Surat Jalan'),
-                        Tab(icon: Icon(Icons.receipt_outlined), text: 'Invoice Tagihan'),
+                        Tab(icon: Icon(Icons.local_shipping_outlined, size: 24), text: 'Surat Jalan'),
+                        Tab(icon: Icon(Icons.receipt_outlined, size: 24), text: 'Invoice Tagihan'),
                       ],
                     ),
                   ),
@@ -159,23 +162,23 @@ Terima kasih.
                       ),
                       child: FilledButton.icon(
                         style: FilledButton.styleFrom(
-                          minimumSize: const Size.fromHeight(60),
-                          backgroundColor: Colors.green.shade700,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          minimumSize: const Size.fromHeight(64),
+                          backgroundColor: Colors.green.shade800,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                         ),
                         onPressed: _isSharing
                             ? null
                             : () => _shareViaWhatsApp(po: po, batch: batch, items: items),
                         icon: _isSharing
                             ? const SizedBox(
-                                width: 24,
-                                height: 24,
+                                width: 26,
+                                height: 26,
                                 child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
                               )
-                            : const Icon(Icons.share_rounded, size: 28),
+                            : const Icon(Icons.share_rounded, size: 30),
                         label: Text(
                           _isSharing ? 'Menyiapkan PDF...' : 'Kirim via WhatsApp / Bagikan PDF',
-                          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),

@@ -83,17 +83,6 @@ class _ImportPoScreenState extends ConsumerState<ImportPoScreen> {
     }
   }
 
-  // Helper shortcut to import sample PO 045 directly on test devices / emulator
-  Future<void> _importSamplePo() async {
-    const samplePath = '/home/ajin/Downloads/PO 045 - Cahyadi (KP Ketapang) Rev 01.pdf';
-    final sampleFile = File(samplePath);
-    if (await sampleFile.exists()) {
-      await _processFilePath(samplePath);
-    } else {
-      await _pickAndParseFile();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -141,40 +130,22 @@ class _ImportPoScreenState extends ConsumerState<ImportPoScreen> {
 
               FilledButton.icon(
                 style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(60),
+                  minimumSize: const Size.fromHeight(64),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(18),
                   ),
                 ),
                 onPressed: _isLoading ? null : _pickAndParseFile,
                 icon: _isLoading
                     ? const SizedBox(
-                        width: 24,
-                        height: 24,
+                        width: 26,
+                        height: 26,
                         child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
                       )
-                    : const Icon(Icons.folder_open_rounded, size: 28),
+                    : const Icon(Icons.folder_open_rounded, size: 30),
                 label: Text(
                   _isLoading ? 'Membaca Dokumen...' : 'Pilih File (PDF / Excel)',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Sample PO Shortcut button for instant testing
-              OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(52),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                onPressed: _isLoading ? null : _importSamplePo,
-                icon: const Icon(Icons.auto_awesome, color: Colors.orange),
-                label: const Text(
-                  'Coba Impor Contoh PO 045 (49 Item)',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ),
 
