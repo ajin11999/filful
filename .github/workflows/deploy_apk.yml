@@ -39,9 +39,6 @@ jobs:
       - name: Run Automated Tests
         run: flutter test
 
-      - name: Build Universal Release APK
-        run: flutter build apk --release
-
       - name: Build Split Release APKs
         run: flutter build apk --release --split-per-abi
 
