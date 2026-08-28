@@ -39,7 +39,7 @@ jobs:
       - name: Run Automated Tests
         run: flutter test
 
-      - name: Build Release APKs (Split per ABI)
+      - name: Build Split Release APKs
         run: flutter build apk --release --split-per-abi
 
       - name: Create GitHub Release
