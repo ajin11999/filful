@@ -20,11 +20,16 @@ subprojects {
 }
 
 subprojects {
-    afterEvaluate {
+    val configureSplash = {
         if (name == "flutter_native_splash") {
             extensions.findByType(com.android.build.api.dsl.LibraryExtension::class.java)
                 ?.compileSdk = 36
         }
+    }
+    if (project.state.executed) {
+        configureSplash()
+    } else {
+        afterEvaluate { configureSplash() }
     }
 }
 
