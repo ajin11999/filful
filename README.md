@@ -1,19 +1,31 @@
-# filful
+<p align="center">
+  <img src="assets/logo/app_icon.png" alt="Filful logo" width="120" />
+</p>
 
-A new Flutter project.
+<h1 align="center">Filful</h1>
 
-## Getting Started
+<p align="center">
+  <strong>Offline-first goods fulfillment for purchase orders.</strong>
+</p>
 
-This project is a starting point for a Flutter application.
+Filful is a Flutter app for goods suppliers who receive purchase orders (POs)
+from client companies and fulfill the requested goods. Ingest POs from PDF or
+Excel, track items and fulfillment batches offline, and generate delivery
+notes — no internet connection required.
 
-A few resources to get you started if this is your first Flutter project:
+## Features
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- **PO ingestion** — parse PDF and Excel purchase orders locally.
+- **Offline tracking** — manage items and fulfillment batches on-device.
+- **Delivery notes** — generate and share delivery notes.
+- **Optional AI fallback** — use Gemini to extract data from unstructured or scanned POs.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# filful
-# filful
+## Dev setup
+
+Prerequisites: [Flutter](https://docs.flutter.dev/get-started/install) (Dart SDK `>=3.10.0`).
+
+```bash
+flutter pub get
+dart run build_runner build --delete-conflicting-outputs
+flutter run
+```
